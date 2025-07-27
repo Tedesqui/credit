@@ -186,7 +186,7 @@
         yearInput.addEventListener('blur', () => {
             const yearValue = parseInt(yearInput.value);
             if (yearInput.value && (yearValue < 2025 || yearValue > 2050)) {
-                yearError.textContent = 'Insira ano de 2025 a 2050.';
+                yearError.textContent = 'Insira um ano de 2025 a 2050.';
                 yearInput.value = '';
             }
         });
