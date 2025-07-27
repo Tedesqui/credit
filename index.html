@@ -50,7 +50,6 @@
         }
         .form-group { margin-bottom: 19px; }
         .input-row { display: flex; gap: 1rem; }
-        /* --- ALTERAÇÃO AQUI --- */
         .form-row { 
             display: flex; 
             gap: 1rem; 
@@ -58,8 +57,9 @@
             margin-bottom: 19px; /* Posição restaurada para o fluxo normal */
         }
         .form-row .form-group { margin-bottom: 0; }
-        .validity-group { flex: 3; } /* Proporção ajustada para dar mais espaço ao CVC */
-        .cvc-group { flex: 2; }    /* Proporção ajustada */
+        /* --- ALTERAÇÃO AQUI --- */
+        .validity-group { flex: 4; } /* Aumentada a proporção para dar mais espaço */
+        .cvc-group { flex: 1; }      /* Diminuída a proporção */
         .month-wrapper { flex: 3; }
         .year-wrapper { flex: 4; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--label-color); }
