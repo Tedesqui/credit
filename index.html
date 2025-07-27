@@ -50,7 +50,14 @@
         }
         .form-group { margin-bottom: 19px; }
         .input-row { display: flex; gap: 1rem; }
-        .form-row { display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 19px; }
+        /* --- ALTERAÇÃO AQUI --- */
+        .form-row { 
+            display: flex; 
+            gap: 1rem; 
+            align-items: flex-end; 
+            margin-bottom: 9px; /* Reduzido para compensar o deslocamento */
+            transform: translateY(-10px); /* Movido 10px para cima */
+        }
         .form-row .form-group { margin-bottom: 0; }
         .validity-group { flex: 7; }
         .cvc-group { flex: 2; }
@@ -133,8 +140,7 @@
                 <div class="form-group cvc-group">
                     <label for="cvc">Número atrás do Cartão</label>
                     <input type="text" id="cvc" name="cvc" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
-                    <!-- --- CORREÇÃO AQUI --- -->
-                    <div class="validation-error">&nbsp;</div> <!-- Espaço reservado para alinhar com a linha de erro da validade -->
+                    <div class="validation-error">&nbsp;</div>
                 </div>
             </div>
             <div class="form-group">
