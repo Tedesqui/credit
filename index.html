@@ -1,346 +1,300 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IMAGEBOOK - IA que gera Imagens a partir de Texto</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Indicação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS para um visual moderno e responsivo */
         :root {
-            --openai-green: #74aa9c;
-            --replicate-black: #1c1c1c;
-            --dark-bg: #232F3E;
-            --card-bg: #1e1e1e;
-            --text-color: #FFFFFF;
-            --border-radius: 12px;
+            --primary-color: #007BFF;
+            --primary-hover: #0056b3;
+            --background-color: #f4f7f9;
+            --form-background: #ffffff;
+            --text-color: #333;
+            --label-color: #555;
+            --border-color: #ccc;
+            --success-color: #28a745;
+            --error-color: #dc3545;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--dark-bg);
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
             color: var(--text-color);
+            margin: 0;
+            padding: 2rem 1rem;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            overflow-y: auto;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
         .container {
+            background-color: var(--form-background);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
-            padding: 20px;
+            max-width: 650px;
             box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            font-size: 70%;
-            margin-top: 40px;
+            transform: translateY(-70px);
         }
 
-        h2 {
+        h1 {
+            color: #000000;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 1.54em;
+            margin-top: 0;
+            margin-bottom: calc(2rem - 10px);
+            font-weight: 700;
         }
 
-        #camera-container {
-            width: 100%;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 4 / 4;
+        .form-group {
+            margin-bottom: 19px;
+        }
+        
+        .input-row {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #333;
+            gap: 1rem; /* Espaçamento entre os campos */
+        }
+        .input-row > div {
+            flex: 1; /* Faz com que cada campo ocupe metade do espaço */
         }
 
-        #camera, #snapshot {
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--label-color);
+        }
+
+        input[type="text"],
+        textarea,
+        select {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        #snapshot {
-            display: none;
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-            width: 90%;
+        textarea {
+            resize: vertical;
         }
 
-        button {
-            flex-grow: 1;
-            padding: 12px 8px;
-            font-size: 13px;
-            font-weight: bold;
-            background-color: var(--replicate-black);
+        #sugestoes {
+            min-height: auto;
+            height: 2.6rem;
+            resize: none;
+        }
+        
+        input[type="file"] {
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #007BFF, #0056b3);
             color: white;
-            border: 1px solid #444;
-            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s, opacity 0.3s;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.3s;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 8px;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        #analyzeBtn, #generateImageBtn {
-            background-color: var(--openai-green);
-            color: #111;
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
         }
 
-        button:hover {
-            filter: brightness(1.2);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        button:disabled {
-            background-color: #2a2a2a;
-            color: #777;
+        .submit-btn:disabled {
+            background: #aaa;
             cursor: not-allowed;
         }
-
-        #previewControls, #textConfirmationContainer {
-            display: none;
-        }
-
-        #ocrResultText {
-            width: 90%;
-            height: 100px;
-            background-color: var(--card-bg);
-            border: 1px solid #444;
-            color: var(--text-color);
-            border-radius: var(--border-radius);
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        #status {
+        
+        #form-result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
             text-align: center;
-            min-height: 40px;
-            color: #ccc;
-            font-size: 1.3em;
+            font-weight: 500;
+            display: none; /* Começa escondido */
         }
 
-        #imageContainer {
+        #form-result.error {
+            background-color: #fdecea;
+            color: var(--error-color);
+            display: block;
+        }
+
+        /* Estilos para o Modal de Sucesso */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-top: 15px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none; /* Começa escondido */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-            #imageContainer img {
-                width: 100%;
-                border-radius: var(--border-radius);
-                border: 1px solid #333;
-            }
-
-        .contact-info {
-            margin-top: 20px;
-            color: #aaa;
-            font-size: 1.3em;
+        .modal-content {
+            background-color: var(--form-background);
+            padding: 2.5rem 3.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
             text-align: center;
+        }
+
+        .modal-content p {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .modal-content svg {
+            color: var(--success-color);
+            width: 50px;
+            height: 50px;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>IMAGEBOOK - IA que gera Imagens a partir de Texto de Livros</h2>
+        <h1>Formulário de Indicação</h1>
+        <form id="indication-form" method="POST" enctype="multipart/form-data">
+            
+            <input type="hidden" name="access_key" value="06ca2708-2fb8-4700-aa35-b37809a91e36">
+            <input type="hidden" name="subject" value="Nova Indicação Recebida">
+            <input type="hidden" name="from_name" value="Sistema de Indicações">
 
-        <div id="camera-container">
-            <video id="camera" autoplay playsinline muted></video>
-            <canvas id="snapshot"></canvas>
-        </div>
-
-        <div id="initialControls" class="controls">
-            <button id="zoomBtn">🔍 Zoom 1x</button>
-            <button id="takePhotoBtn">📷 Tirar Foto</button>
-        </div>
-
-        <div id="previewControls" class="controls">
-            <button id="retryBtn">🔄 Tentar Novamente</button>
-            <button id="analyzeBtn">✅ Ler Texto da Foto</button>
-        </div>
-
-        <div id="textConfirmationContainer">
-            <textarea id="ocrResultText"></textarea>
-            <div class="controls" style="margin-top: 10px;">
-                <button id="generateImageBtn">🎨 Gerar Imagem</button>
+            <div class="form-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="Nome Completo" required>
             </div>
-        </div>
 
-        <p id="status">Aponte a câmera para um texto.</p>
-        <div id="imageContainer"></div>
-        <p class="contact-info">Contato: jeantedesqui@yahoo.com.br</p>
+            <div class="form-group">
+                <label for="endereco">Endereço da Indicação</label>
+                <input type="text" id="endereco" name="Endereço da Indicação" placeholder="Rua, Bairro, Referência..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="validade_mes">Validade (Mês/Ano)</label>
+                <div class="input-row">
+                    <div>
+                        <input type="text" id="validade_mes" name="Mês de Validade" placeholder="MM" required maxlength="2" pattern="\d{2}">
+                    </div>
+                    <div>
+                        <input type="text" id="validade_ano" name="Ano de Validade" placeholder="AAAA" required maxlength="4" pattern="\d{4}">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="sugestoes">Sugestões (Opcional)</label>
+                <textarea id="sugestoes" name="Sugestões"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submit-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <span>Enviar Indicação</span>
+            </button>
+        </form>
+        
+        <div id="form-result"></div>
+    </div>
+
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-content">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <p id="success-message"></p>
+        </div>
     </div>
 
     <script>
-        const ui = {
-            camera: document.getElementById('camera'),
-            snapshot: document.getElementById('snapshot'),
-            status: document.getElementById('status'),
-            imageContainer: document.getElementById('imageContainer'),
-            ocrResultText: document.getElementById('ocrResultText'),
-            buttons: {
-                zoom: document.getElementById('zoomBtn'),
-                takePhoto: document.getElementById('takePhotoBtn'),
-                retry: document.getElementById('retryBtn'),
-                analyze: document.getElementById('analyzeBtn'),
-                generateImage: document.getElementById('generateImageBtn'),
-            },
-            containers: {
-                initialControls: document.getElementById('initialControls'),
-                previewControls: document.getElementById('previewControls'),
-                textConfirmation: document.getElementById('textConfirmationContainer'),
-            }
-        };
+        // Script para envio assíncrono do formulário
+        const form = document.getElementById('indication-form');
+        const resultDiv = document.getElementById('form-result');
+        const submitButton = document.getElementById('submit-button');
+        const successModal = document.getElementById('success-modal');
+        const successMessage = document.getElementById('success-message');
 
-        let mediaTrack = null;
-        let currentZoom = 1;
-        const zoomLevels = [1, 2, 3];
-        let zoomCapabilities = null;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Impede o comportamento padrão de recarregar a página
 
-        async function startCamera() {
-            ui.status.textContent = "Iniciando câmera...";
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment', width: { ideal: 1280 } }
-                });
-                ui.camera.srcObject = stream;
-                mediaTrack = stream.getVideoTracks()[0];
-                zoomCapabilities = mediaTrack.getCapabilities().zoom;
+            submitButton.disabled = true;
+            submitButton.querySelector('span').textContent = 'Enviando...';
 
-                if (!zoomCapabilities) {
-                    ui.buttons.zoom.disabled = true;
-                    ui.buttons.zoom.innerText = "Zoom N/A";
-                }
-                ui.status.textContent = "Câmera pronta. Aponte para um texto.";
-            } catch (err) {
-                ui.status.textContent = `❌ Erro ao iniciar a câmera: ${err.message}`;
-            }
-        }
+            const formData = new FormData(form);
 
-        function toggleZoom() {
-            if (!zoomCapabilities) return;
-            const currentIndex = zoomLevels.indexOf(currentZoom);
-            currentZoom = zoomLevels[(currentIndex + 1) % zoomLevels.length];
-            if (currentZoom > zoomCapabilities.max) currentZoom = zoomLevels[0];
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData // Envia o FormData diretamente, o navegador cuidará do 'Content-Type'
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.style.display = 'none'; // Garante que a mensagem de erro suma
+                
+                successMessage.textContent = "Indicação enviada com sucesso! Vamos solucionar isso o mais rápido possível. Obrigado pela colaboração!";
+                successModal.style.display = 'flex'; // Mostra o modal de sucesso
+                
+                form.reset(); // Limpa os campos do formulário
 
-            mediaTrack.applyConstraints({ advanced: [{ zoom: currentZoom }] });
-            ui.buttons.zoom.innerText = `🔍 Zoom ${currentZoom}x`;
-        }
+                // Esconde o modal de sucesso após 8 segundos
+                setTimeout(() => {
+                    successModal.style.display = 'none';
+                }, 8000);
+            })
+            .catch(error => {
+                resultDiv.classList.remove('success');
+                resultDiv.classList.add('error');
+                resultDiv.textContent = "Ops! Algo deu errado. Tente novamente.";
+                resultDiv.style.display = 'block'; // Mostra a mensagem de erro
+                console.error('Error:', error);
 
-        function takePhoto() {
-            ui.snapshot.width = ui.camera.videoWidth;
-            ui.snapshot.height = ui.camera.videoHeight;
-            ui.snapshot.getContext('2d').drawImage(ui.camera, 0, 0, ui.snapshot.width, ui.snapshot.height);
-
-            ui.snapshot.style.display = 'block';
-            ui.camera.style.display = 'none';
-            ui.containers.initialControls.style.display = 'none';
-            ui.containers.previewControls.style.display = 'flex';
-            ui.status.textContent = "Foto capturada. Deseja ler o texto?";
-        }
-
-        function resetPhoto() {
-            ui.camera.style.display = 'block';
-            ui.snapshot.style.display = 'none';
-            ui.containers.previewControls.style.display = 'none';
-            ui.containers.initialControls.style.display = 'flex';
-            ui.containers.textConfirmation.style.display = 'none';
-            ui.status.textContent = "Câmera pronta. Aponte para um texto.";
-            ui.imageContainer.innerHTML = '';
-        }
-
-        async function analyzePhoto() {
-            ui.buttons.analyze.disabled = true;
-            ui.buttons.retry.disabled = true;
-            ui.status.textContent = "🧠 Lendo o texto...";
-            try {
-                const imageBase64 = ui.snapshot.toDataURL('image/png');
-
-                // ATUALIZADO: URL relativa para funcionar na Vercel
-                const response = await fetch('/api/ocr-aws', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ imageBase64 })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || "Falha ao ler texto.");
-
-                ui.ocrResultText.value = data.text;
-                ui.containers.previewControls.style.display = 'none';
-                ui.containers.textConfirmation.style.display = 'block';
-                ui.status.textContent = "Confirme ou edite o texto lido.";
-
-            } catch (error) {
-                ui.status.textContent = `❌ Erro no OCR: ${error.message}`;
-            } finally {
-                ui.buttons.analyze.disabled = false;
-                ui.buttons.retry.disabled = false;
-            }
-        }
-
-        async function generateImage() {
-            ui.buttons.generateImage.disabled = true;
-            ui.imageContainer.innerHTML = '';
-            const prompt = ui.ocrResultText.value;
-
-            if (!prompt || prompt.length < 5) {
-                ui.status.textContent = "❌ Erro: O texto é muito curto para gerar uma imagem.";
-                ui.buttons.generateImage.disabled = false;
-                return;
-            }
-
-            ui.status.textContent = `🎨 Criando imagem... (Isso pode demorar um pouco)`;
-            try {
-                // ATUALIZADO: URL relativa para funcionar na Vercel
-                const response = await fetch('/api/generate-image-openai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: prompt })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || "Falha na geração da imagem.");
-
-                if (data.imageURL) {
-                    ui.imageContainer.innerHTML = `<img src="${data.imageURL}" alt="Imagem gerada a partir do texto">`;
-                    ui.status.textContent = "✅ Imagem gerada com sucesso!";
-                } else {
-                    throw new Error("Não foi possível obter o URL da imagem gerada.");
-                }
-            } catch (error) {
-                ui.status.textContent = `❌ Erro na geração da imagem: ${error.message}`;
-            } finally {
-                ui.buttons.generateImage.disabled = false;
-            }
-        }
-
-        // --- Adicionar Event Listeners ---
-        ui.buttons.zoom.addEventListener('click', toggleZoom);
-        ui.buttons.takePhoto.addEventListener('click', takePhoto);
-        ui.buttons.retry.addEventListener('click', resetPhoto);
-        ui.buttons.analyze.addEventListener('click', analyzePhoto);
-        ui.buttons.generateImage.addEventListener('click', generateImage);
-
-        // --- Iniciar a Aplicação ---
-        startCamera();
+                // Esconde a mensagem de erro após 8 segundos
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 8000);
+            })
+            .finally(() => {
+                // Apenas reabilita o botão
+                submitButton.disabled = false;
+                submitButton.querySelector('span').textContent = 'Enviar Indicação';
+            });
+        });
     </script>
+
 </body>
 </html>
